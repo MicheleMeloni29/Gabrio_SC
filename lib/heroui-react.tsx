@@ -160,7 +160,7 @@ type ButtonProps = ComponentProps<"button"> & {
   color?: "primary" | "warning";
   variant?: "solid" | "flat";
   as?: typeof NextLink;
-  href?: string;
+  href?: ComponentProps<typeof NextLink>["href"];
 };
 
 export function Button({
@@ -196,6 +196,9 @@ export function Button({
   }
 
   const Component = as;
+  if (!href) {
+    throw new Error("Link buttons require an href.");
+  }
   return (
     <Component
       href={href}
