@@ -1,7 +1,7 @@
 "use client";
 
 import NextLink from "next/link";
-import { ComponentProps, forwardRef } from "react";
+import { ComponentProps, ReactNode, forwardRef } from "react";
 
 const cn = (...classes: Array<string | null | undefined | false>) =>
   classes.filter(Boolean).join(" ");
@@ -156,22 +156,29 @@ export const Link = forwardRef<HTMLAnchorElement, LinkProps>(
 );
 Link.displayName = "Link";
 
-type ButtonProps = ComponentProps<"button"> & {
+type BaseButtonProps = {
   color?: "primary" | "warning";
   variant?: "solid" | "flat";
-  as?: typeof NextLink;
-  href?: ComponentProps<typeof NextLink>["href"];
+  className?: string;
+  children?: ReactNode;
 };
 
-export function Button({
-  className,
-  color = "primary",
-  variant = "solid",
-  as,
-  href,
-  children,
-  ...props
-}: ButtonProps) {
+type NativeButtonProps = BaseButtonProps &
+  Omit<ComponentProps<"button">, "className" | "children"> & {
+    as?: undefined;
+    href?: undefined;
+  };
+
+type LinkButtonProps = BaseButtonProps &
+  Omit<ComponentProps<typeof NextLink>, "className" | "children"> & {
+    as: typeof NextLink;
+    href: ComponentProps<typeof NextLink>["href"];
+  };
+
+type ButtonProps = NativeButtonProps | LinkButtonProps;
+
+export function Button(props: ButtonProps) {
+  const { className, color = "primary", variant = "solid", children } = props;
   const palette =
     color === "warning"
       ? "bg-amber-400 text-black hover:bg-amber-300"
@@ -180,7 +187,8 @@ export function Button({
     color === "warning"
       ? "bg-amber-400/15 text-amber-200 hover:bg-amber-400/30"
       : "bg-white/10 text-white hover:bg-white/20";
-  if (!as) {
+  if (!props.as) {
+    const { as, href, ...buttonProps } = props as NativeButtonProps;
     return (
       <button
         className={cn(
@@ -188,17 +196,14 @@ export function Button({
           variant === "flat" ? flatPalette : palette,
           className
         )}
-        {...props}
+        {...buttonProps}
       >
         {children}
       </button>
     );
   }
 
-  const Component = as;
-  if (!href) {
-    throw new Error("Link buttons require an href.");
-  }
+  const { as: Component, href, ...linkProps } = props as LinkButtonProps;
   return (
     <Component
       href={href}
@@ -207,7 +212,7 @@ export function Button({
         variant === "flat" ? flatPalette : palette,
         className
       )}
-      {...props}
+      {...linkProps}
     >
       {children}
     </Component>
