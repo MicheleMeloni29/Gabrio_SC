@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gabrio Rinaldi - Graphic Designer",
+  title: "Gabrio - Graphic Designer",
   description:
     "Portfolio e landing page per presentare servizi di branding, art direction ed editorial design di Gabrio Rinaldi.",
 };
