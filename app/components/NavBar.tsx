@@ -10,6 +10,7 @@ import {
   NavbarMenuToggle,
 } from "@heroui/react";
 
+// Elenco delle sezioni della pagina da usare per i link del menu di navigazione.
 const sections = [
   { id: "hero", label: "Hero" },
   { id: "about", label: "About" },
@@ -42,6 +43,7 @@ export default function NavBar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
+    // Osserva l'intersezione delle sezioni per evidenziare il link attivo durante lo scroll.
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -62,6 +64,7 @@ export default function NavBar() {
   }, []);
 
   const handleNavigate = (id: SectionId) => {
+    // Scroll morbido verso la sezione selezionata e chiusura del menu mobile.
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setIsMenuOpen(false);
   };
